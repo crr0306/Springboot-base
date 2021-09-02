@@ -9,40 +9,47 @@ package com.spring.base.utils.result;
  * Created by crr
  */
 public class Result<T> {
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setResult(T result) {
+        this.result = result;
+    }
+
     /** 错误码. */
-    private String returnCode="0";
+    private int code=200;
 
     /** 提示信息. */
-    private String msg="success";
-
-    public T getReturnData() {
-        return returnData;
-    }
-
-    public void setReturnData(T returnData) {
-        this.returnData = returnData;
-    }
+    private String message="success";
 
     /** 具体的内容. */
-    private T returnData;
+    private T result;
 
-    public String getReturnCode() {
-        return returnCode;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
-    public void setReturnCode(String returnCode) {
-        this.returnCode = returnCode;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public String getMsg() {
-        return msg;
+    private boolean success=true;
+
+    public int getCode() {
+        return code;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public String getMessage() {
+        return message;
     }
 
-
-
+    public T getResult() {
+        return result;
+    }
 }
 

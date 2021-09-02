@@ -1,5 +1,6 @@
 package com.spring.base.utils.aes;
 
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -12,10 +13,11 @@ import java.util.Arrays;
 
 
 /**
- * 
+ *
  * @author crr
  * * 前后端数据传输加密工具类
  *  参考内容：https://blog.csdn.net/junmoxi/article/details/80917234
+ *  微信解密：https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
  */
 public class AesEncryptUtils {
     private static Logger logger = Logger.getLogger(AesEncryptUtils.class);
@@ -26,8 +28,7 @@ public class AesEncryptUtils {
     /**参数分别代表 算法名称/加密模式/数据填充方式*/
     private static final String ALGORITHMSTR = "AES/CBC/PKCS7Padding";
 
-    private static final String WATERMARK = "watermark";
-    private static final String APPID = "appid";
+
 
     /**
      * 加密
@@ -96,11 +97,21 @@ public class AesEncryptUtils {
         params.init(new IvParameterSpec(iv));
         return params;
     }
+    /**
+     * 功能描述: <br>
+     * 〈〉iv:默认的初始化向量值;
+     * keyByte:加密的KEY
+     * @Param: [content, keyByte, ivByte]
+     * @Return: byte[]
+     * @Author: chengranran
+     * @Date: 2021/3/24 16:58
+     */
     public static byte[] decrypt(byte[] content, byte[] keyByte, byte[] ivByte) throws InvalidAlgorithmParameterException {
         initialize();
         try {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             Key sKeySpec = new SecretKeySpec(keyByte, "AES");
+
             cipher.init(Cipher.DECRYPT_MODE, sKeySpec, generateIV(ivByte));// 初始化
             byte[] result = cipher.doFinal(content);
             return result;
@@ -123,26 +134,13 @@ public class AesEncryptUtils {
         }
         return null;
     }
-    /**
-     * 删除解密后明文的补位字符
-     *
-     * @param decrypted
-     *            解密后的明文
-     * @return 删除补位字符后的明文
-     */
-    public static byte[] decode(byte[] decrypted) {
-        int pad = decrypted[decrypted.length - 1];
-        if (pad < 1 || pad > 32) {
-            pad = 0;
-        }
-        return Arrays.copyOfRange(decrypted, 0, decrypted.length - pad);
-    }
+
     /**
      * 解密数据
      * @return
      * @throws Exception
      */
-    public static String decrypt(String appId, String encryptedData, String sessionKey, String iv){
+    public static String decrypt(String encryptedData, String sessionKey, String iv){
         String result = "";
         try {
 
@@ -159,20 +157,21 @@ public class AesEncryptUtils {
         return result;
     }
 
-    public static void main(String[] args) {
-        try {
-//            encryptedData:f7KBxq7XZ1SGBYAVNUPLqsBX6bdKLTTwlN+BvvKg1YY92eOxg0EisRRRlYYG2ZAbpDlCeWT1GoGYvk4nrc0brLPrwgIfSSDQo7QAq5iUFtXi7t/p3p/t8CrS28rJB9niTsrteS8g78tASaiDB1WIt34Qjx0TjtIIMjFVY/FXjRtltuve3ADPrefYOkBoU2TRCpXXvdBIxTFx6GyyzZb/pQ==,
-//                    iv:PD89jqhSTSDCB3dA146Ffw==,
-//                    sessionKey：xAunW5fXE1dEdMZYsx1AbA==
-
-            String appId = "wxddc0c0e3ee0a48a2";
-            String encryptedData = "BjwR2Jt9s1qOp9lp8s9L30PQFN2oz17tVJ0qufd0TR3+an4kMM7NBqSWeu771+BHwjqt7Pz+sN1BoLGNe6HawY+/hSTxCO4pOeGCV8fkg0vWOxNFsV/gMP5yHxUV7w68znvz4Irwu+McRtMj6khWk1xAEgjRaQ/YC2LsfOqS/K1fdWuqeOzi1TJIj9AuaR005j861+0+EI6lnSrhsZ12tA==";
-            String sessionKey = "1C0kLUJk8ejjA2FpsYN0mA==";
-            String iv = "mb6z82jLnV1m7GM1Ez/3vQ==";
-            System.out.println(decrypt(appId, encryptedData, sessionKey, iv));
-        } catch (Exception e) {
-            e.printStackTrace();
+    /**
+     * 删除解密后明文的补位字符
+     *
+     * @param decrypted
+     *            解密后的明文
+     * @return 删除补位字符后的明文
+     */
+    public static byte[] decode(byte[] decrypted) {
+        int pad = decrypted[decrypted.length - 1];
+        if (pad < 1 || pad > 32) {
+            pad = 0;
         }
+        return Arrays.copyOfRange(decrypted, 0, decrypted.length - pad);
     }
+
+
 }
 

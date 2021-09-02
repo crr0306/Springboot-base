@@ -1,7 +1,7 @@
 package com.spring.base.utils.exception;
 
-
 import com.spring.base.utils.errorcode.ServiceError;
+import com.spring.base.utils.exception.WeiDianServiceException;
 import com.spring.base.utils.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,17 @@ public class ExceptionHandle {
     @ResponseBody
     public Result handle(Exception e) {
         Result result=new Result();
-        if (e instanceof ServiceException) {   //判断异常是否是我们定义的异常
-            ServiceException serviceException = (ServiceException) e;
-            result.setReturnCode(serviceException.getErrorCode());
-            result.setMsg(serviceException.getErrorMsg());
+        if (e instanceof WeiDianServiceException) {   //判断异常是否是我们定义的异常
+            WeiDianServiceException weiDianServiceException = (WeiDianServiceException) e;
+            result.setCode(weiDianServiceException.getErrorCode());
+            result.setMessage(weiDianServiceException.getErrorMsg());
+            result.setSuccess(false);
             return result;
         }else {
-            logger.error("【系统异常】:"+e);
-            result.setReturnCode(ServiceError.SYSTEM_ERROR.getCode());
-            result.setMsg(ServiceError.SYSTEM_ERROR.getMsg());
+            logger.error("the error : {}",e.getMessage(),e);
+            result.setCode(ServiceError.SYSTEM_ERROR_CODE);
+            result.setMessage(ServiceError.SYSTEM_ERROR_MSG);
+            result.setSuccess(false);
             return result;
         }
     }
